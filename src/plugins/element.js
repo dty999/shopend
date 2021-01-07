@@ -1,30 +1,5 @@
 import Vue from 'vue'
-import {
-	Button,
-	Form,
-	FormItem,
-	Input,
-	Message,
-	Container,
-	Header,
-	Aside,
-	Main,
-	Menu,
-	Submenu,
-	MenuItem
-} from 'element-ui'
+import Element from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
-
-Vue.use(Button)
-Vue.use(Form)
-Vue.use(FormItem)
-Vue.use(Input)
-Vue.use(Main)
-Vue.use(Aside)
-Vue.use(Header)
-Vue.use(Container)
-Vue.use(Menu)
-Vue.use(Submenu)
-Vue.use(MenuItem)
-//消息弹框的用法不一样
-Vue.prototype.$message = Message
+Vue.use(Element)
