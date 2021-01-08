@@ -35,6 +35,7 @@
               <span>{{ item.authName }}</span>
             </template>
             <!-- 一级菜单里的二级菜单 -->
+            <!-- index配置跳转连接 -->
             <el-menu-item
               :index="'/' + subItem.path"
               v-for="subItem in item.children"
