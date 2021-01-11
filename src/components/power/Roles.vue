@@ -23,7 +23,11 @@
         <el-table-column prop="roleDesc" label="角色描述"> </el-table-column>
         <el-table-column label="操作" width="300px">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" size="mini" @click='handleEdit'
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="handleEdit(scope.row.id)"
               >编辑</el-button
             >
             <el-button type="danger" icon="el-icon-delete" size="mini"
@@ -68,13 +72,13 @@
         </span>
       </el-dialog>
       <!-- 编辑对话框 -->
-      <EditRolesDialog ref='editRolesDialog'/>
+      <EditRolesDialog ref="editRolesDialog" />
     </el-card>
   </div>
 </template>
 
 <script>
-import EditRolesDialog from '../common/dialog/EditRolesDialog.vue'
+import EditRolesDialog from "../common/dialog/EditRolesDialog.vue";
 export default {
   components: {
     EditRolesDialog,
@@ -131,9 +135,11 @@ export default {
         });
       });
     },
-		handleEdit(){
-			this.$refs.editRolesDialog.Visible = true
-		},
+    handleEdit(id) {
+      this.$refs.editRolesDialog.Visible = true;
+      // console.log(id);
+      //发起网络请求获取角色描述
+    },
   },
 };
 </script>
