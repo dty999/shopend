@@ -30,7 +30,11 @@
               @click="handleEdit(scope.row.id)"
               >编辑</el-button
             >
-            <el-button type="danger" icon="el-icon-delete" size="mini"
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="deleteRoles(scope.row.id)"
               >删除</el-button
             >
             <el-button type="warning" icon="el-icon-setting" size="mini"
@@ -72,7 +76,7 @@
         </span>
       </el-dialog>
       <!-- 编辑对话框 -->
-      <EditRolesDialog ref="editRolesDialog" />
+      <EditRolesDialog ref="editRolesDialog" @editSuccess="cb_editSuccess" />
     </el-card>
   </div>
 </template>
@@ -138,7 +142,44 @@ export default {
     handleEdit(id) {
       this.$refs.editRolesDialog.Visible = true;
       // console.log(id);
-      //发起网络请求获取角色描述
+      //发起网络请求获取角色详情
+      this.$http.get("roles/" + id).then((res) => {
+        const data = res.data;
+        if (data.meta.status !== 200)
+          return this.$message.error("获取角色详情失败");
+        // console.log(data.data);
+        this.$refs.editRolesDialog.RolesForm = data.data;
+        // console.log(this.$refs.editRolesDialog.RolesForm);
+      });
+    },
+    cb_editSuccess() {
+      this.getRolesList();
+    },
+    deleteRoles(id) {
+      this.$confirm("此操作将永久删除该角色, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          //执行删除操作的网络请求
+          this.$http.delete(`roles/${id}`).then((res) => {
+            if (res.data.meta.status !== 200) {
+              return this.$message.error("删除失败");
+            }
+            this.$message({
+              type: "success",
+              message: "删除成功!",
+            });
+            this.getRolesList();
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
 };

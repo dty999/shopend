@@ -8,10 +8,10 @@
     <!-- 表单 -->
     <el-form label-width="100px" :model="RolesForm">
       <el-form-item label="角色名称">
-        <el-input v-model="RolesForm.rolesName"></el-input>
+        <el-input v-model="RolesForm.roleName"></el-input>
       </el-form-item>
       <el-form-item label="角色描述">
-        <el-input v-model="RolesForm.rolesDesc"></el-input>
+        <el-input v-model="RolesForm.roleDesc"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -32,14 +32,27 @@ export default {
     return {
       Visible: false,
       RolesForm: {
-        rolesName: "",
-        rolesDesc: "",
+        roleName: "niha",
+        roleDesc: "",
+        roleId: 0,
       },
     };
   },
   methods: {
     handleClose() {},
-    addRoles() {},
+    addRoles() {
+      this.$http
+        .put(`roles/${this.RolesForm.roleId}`, {
+          roleName: this.RolesForm.roleName,
+          roleDesc: this.RolesForm.roleDesc,
+        })
+        .then((res) => {
+          if (res.data.meta.status !== 200)
+            return this.$message.error("修改失败");
+          this.Visible = false;
+          this.$emit("editSuccess");
+        });
+    },
   },
 };
 </script>
