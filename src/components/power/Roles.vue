@@ -90,7 +90,7 @@
               type="warning"
               icon="el-icon-setting"
               size="mini"
-              @click="showSetRightsDialog"
+              @click="showSetRightsDialog(scope.row)"
               >分配权限</el-button
             >
           </template>
@@ -131,7 +131,7 @@
       <!-- 编辑对话框 -->
       <EditRolesDialog ref="editRolesDialog" @editSuccess="cb_editSuccess" />
       <!-- 编辑权限对话框 -->
-      <SetRightsDialog />
+      <SetRightsDialog ref="setRightsDialog" @Rufsh="rufsh" />
     </el-card>
   </div>
 </template>
@@ -170,6 +170,10 @@ export default {
     this.getRolesList();
   },
   methods: {
+    rufsh() {
+      this.getRolesList();
+      console.log("刷新");
+    },
     //获取角色列表7
     getRolesList() {
       this.$http.get(`roles`).then((res) => {
@@ -258,6 +262,19 @@ export default {
         return this.$message.error("删除权限失败");
       this.$message.success("删除权限成功");
       roles.children = res.data.data;
+    },
+    showSetRightsDialog(role) {
+      // 获取所有权限
+      this.$http.get(`rights/tree`).then((res) => {
+        if (res.data.meta.status !== 200)
+          return this.$message.error("获取权限失败");
+        this.$refs.setRightsDialog.rightsList = res.data.data;
+        // console.log(this.$refs.setRightsDialog.rightsList);
+      });
+      //获取当前角色的三级权限
+      this.$refs.setRightsDialog.getLeafRights(role);
+      this.$refs.setRightsDialog.Visible = true;
+      this.$refs.setRightsDialog.roles = role;
     },
   },
 };
