@@ -73,6 +73,7 @@
                 type="warning"
                 icon="el-icon-setting"
                 size="mini"
+                @click="setRoles(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -165,12 +166,18 @@
           </el-button>
         </span>
       </el-dialog>
+      <!-- 分配角色对话框 -->
+      <SetRolesDialog ref="SetRolesDialog" @success="setRolesSuccess" />
     </el-card>
   </div>
 </template>
 
 <script>
+import SetRolesDialog from "../common/dialog/SetRolesDialog";
 export default {
+  components: {
+    SetRolesDialog,
+  },
   data() {
     return {
       queryInfo: {
@@ -361,6 +368,18 @@ export default {
             message: "已取消删除",
           });
         });
+    },
+    setRoles(row) {
+      this.$refs.SetRolesDialog.Visible = true;
+      this.$refs.SetRolesDialog.userInfo = row;
+      this.$http.get(`roles`).then((res) => {
+        if (res.data.meta.status !== 200)
+          return this.$message.error("获取角色列表失败");
+        this.$refs.SetRolesDialog.rolesList = res.data.data;
+      });
+    },
+    setRolesSuccess() {
+      this.getUserList();
     },
   },
 };

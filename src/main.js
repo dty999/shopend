@@ -8,7 +8,10 @@ import './assets/fonts/iconfont.css'
 
 import axios from 'axios'
 
-axios.defaults.baseURL = 'https://api.naccl.top/vue/shop/api/private/v1/'
+// axios.defaults.baseURL = 'https://api.naccl.top/vue/shop/api/private/v1/'
+
+axios.defaults.baseURL = 'http://vueshop.pixiv.download/api/private/v1/'
+
 axios.interceptors.request.use(config => {
 	// console.log(config)
 	config.headers.Authorization = window.sessionStorage.getItem('token')
