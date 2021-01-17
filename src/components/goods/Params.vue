@@ -32,22 +32,44 @@
       <!-- tabs页签 -->
       <el-tabs v-model="activeName" @tab-click="handleTabsClick">
         <el-tab-pane label="动态参数" name="many">
-          <el-button type="primary" size="mini" :disabled="isDisableBtn"
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="isDisableBtn"
+            @click="handleAddParamsClick"
             >添加参数</el-button
           >
           <!-- 参数表格区 -->
           <el-table :data="manyTable" style="width: 100%">
-            <el-table-column type="expand"> </el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag
+                  v-for="(item, index) in scope.row.attr_vals"
+                  :key="index"
+                  closable
+                >
+                  {{ item }}
+                </el-tag>
+              </template>
+            </el-table-column>
 
             <el-table-column type="index"> </el-table-column>
             <el-table-column prop="attr_name" label="参数名称">
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button type="primary" size="mini" icon="el-icon-edit"
+                <el-button
+                  type="primary"
+                  size="mini"
+                  icon="el-icon-edit"
+                  @click="editClick(scope.row)"
                   >编辑</el-button
                 >
-                <el-button type="danger" size="mini" icon="el-icon-delete"
+                <el-button
+                  type="danger"
+                  size="mini"
+                  icon="el-icon-delete"
+                  @click="deleteClick(scope.row)"
                   >删除</el-button
                 >
               </template>
@@ -55,7 +77,11 @@
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="静态参数" name="only">
-          <el-button type="primary" size="mini" :disabled="isDisableBtn"
+          <el-button
+            type="primary"
+            size="mini"
+            :disabled="isDisableBtn"
+            @click="handleAddParamsClick"
             >添加属性</el-button
           >
           <!-- 参数表格区 -->
@@ -67,10 +93,18 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button type="primary" size="mini" icon="el-icon-edit"
+                <el-button
+                  type="primary"
+                  size="mini"
+                  icon="el-icon-edit"
+                  @click="editClick(scope.row)"
                   >编辑</el-button
                 >
-                <el-button type="danger" size="mini" icon="el-icon-delete"
+                <el-button
+                  type="danger"
+                  size="mini"
+                  icon="el-icon-delete"
+                  @click="deleteClick(scope.row)"
                   >删除</el-button
                 >
               </template>
@@ -78,12 +112,17 @@
           </el-table>
         </el-tab-pane>
       </el-tabs>
+      <ParamsDialog ref="paramsDialog" @success="getParams"></ParamsDialog>
     </el-card>
   </div>
 </template>
 
 <script>
+import ParamsDialog from "./dialog/ParamsDialog";
 export default {
+  components: {
+    ParamsDialog,
+  },
   data() {
     return {
       cateList: [],
@@ -120,8 +159,30 @@ export default {
     this.getCateList();
   },
   methods: {
+    editClick(row) {},
+    deleteClick(row) {},
+    handleAddParamsClick() {
+      this.$refs.paramsDialog.Visible = true;
+      this.$refs.paramsDialog.cateId = this.selectedCascKeys[2];
+      if (this.activeName === "many") {
+        this.$refs.paramsDialog.title = "添加动态参数";
+        this.$refs.paramsDialog.sel = "many";
+        this.$refs.paramsDialog.labelText = "动态参数:";
+      } else {
+        this.$refs.paramsDialog.title = "添加静态属性";
+        this.$refs.paramsDialog.sel = "only";
+        this.$refs.paramsDialog.labelText = "静态属性";
+      }
+    },
     handleTabsClick() {
-      console.log(this.activeName);
+      // console.log(this.activeName);
+
+      if (this.selectedCascKeys.length < 3) {
+        this.selectedCascKeys = [];
+        this.manyTable = [];
+        this.onlyTable = [];
+        return;
+      }
       this.getParams();
     },
     getCateList() {
@@ -136,9 +197,12 @@ export default {
       // 级联选择框选择变化触发
       if (this.selectedCascKeys.length < 3) {
         this.selectedCascKeys = [];
+        this.manyTable = [];
+        this.onlyTable = [];
         return;
       }
       // console.log(this.selectedCascKeys);
+
       this.getParams();
     },
     getParams() {
@@ -149,7 +213,11 @@ export default {
         .then((res) => {
           if (res.data.meta.status !== 200)
             return this.$message.error("获取参数列表失败");
+          res.data.data.forEach((item) => {
+            item.attr_vals = item.attr_vals ? item.attr_vals.split(",") : [];
+          });
           console.log(res.data.data);
+
           if (this.activeName === "many") {
             this.manyTable = res.data.data;
           } else {
@@ -164,5 +232,8 @@ export default {
 <style lang="less" scoped>
 .cat_opt {
   margin: 15px 0;
+}
+.el-tag {
+  margin: 5px 5px;
 }
 </style>
