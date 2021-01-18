@@ -47,9 +47,28 @@
                   v-for="(item, index) in scope.row.attr_vals"
                   :key="index"
                   closable
+                  @close="handleTagClose(index, scope.row)"
                 >
                   {{ item }}
                 </el-tag>
+                <!-- 添加标签 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                  >+ New Tag</el-button
+                >
               </template>
             </el-table-column>
 
@@ -86,7 +105,36 @@
           >
           <!-- 参数表格区 -->
           <el-table :data="onlyTable" style="width: 100%">
-            <el-table-column type="expand"> </el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag
+                  v-for="(item, index) in scope.row.attr_vals"
+                  :key="index"
+                  closable
+                  @close="handleTagClose(index, scope.row)"
+                >
+                  {{ item }}
+                </el-tag>
+                <!-- 添加标签 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                  >+ New Tag</el-button
+                >
+              </template>
+            </el-table-column>
 
             <el-table-column type="index"> </el-table-column>
             <el-table-column prop="attr_name" label="属性名称">
@@ -215,6 +263,8 @@ export default {
             return this.$message.error("获取参数列表失败");
           res.data.data.forEach((item) => {
             item.attr_vals = item.attr_vals ? item.attr_vals.split(",") : [];
+            item.inputVisible = false;
+            item.inputValue = "";
           });
           console.log(res.data.data);
 
@@ -224,6 +274,43 @@ export default {
             this.onlyTable = res.data.data;
           }
         });
+    },
+    showInput(row) {
+      row.inputVisible = true;
+      // $nextTick当页面重新渲染才会回调指定的函数
+      this.$nextTick((_) => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+    // 文本框失去焦点或按下enter
+    handleInputConfirm(row) {
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = "";
+        row.inputVisible = false;
+        return;
+      }
+      // 如果没有return...
+      row.attr_vals.push(row.inputValue.trim());
+      row.inputValue = "";
+      row.inputVisible = false;
+      this.saveAttr(row);
+    },
+    saveAttr(row) {
+      this.$http
+        .put(`categories/${this.cateId}/attributes/${row.attr_id}`, {
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          attr_vals: row.attr_vals.join(","),
+        })
+        .then((res) => {
+          if (res.data.meta.status !== 200)
+            return this.$message.error("保存失败");
+          return this.$message.success("保存成功");
+        });
+    },
+    handleTagClose(index, row) {
+      row.attr_vals.splice(index, 1);
+      this.saveAttr(row);
     },
   },
 };
@@ -235,5 +322,8 @@ export default {
 }
 .el-tag {
   margin: 5px 5px;
+}
+.input-new-tag {
+  width: 150px;
 }
 </style>
