@@ -19,7 +19,7 @@
           :collapse="isCollapse"
           :collapse-transition="false"
           router
-          :default-active="$route.fullPath"
+          :default-active="this.$route.fullPath"
         >
           <!-- //一级菜单 -->
           <el-submenu
