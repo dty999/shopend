@@ -41,6 +41,7 @@
           :tab-position="'left'"
           v-model="activeIndex"
           :before-leave="leaveTab"
+          @tab-click="handleTabClick"
         >
           <el-tab-pane label="基本信息" name="0">
             <el-form-item label="商品名称" prop="goods_name">
@@ -64,7 +65,22 @@
               ></el-cascader>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品参数" name="1">配置管理</el-tab-pane>
+          <el-tab-pane label="商品参数" name="1">
+            <el-form-item
+              v-for="item in manyTableData"
+              :label="item.attr_name"
+              :key="item.attr_id"
+            >
+              <el-checkbox-group v-model="item.attr_vals">
+                <el-checkbox
+                  v-for="(item1, index) in item.attr_vals"
+                  :key="index"
+                  :label="item1"
+                  border
+                ></el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-tab-pane>
           <el-tab-pane label="商品属性" name="2">角色管理</el-tab-pane>
           <el-tab-pane label="商品图片" name="3">角色管理</el-tab-pane>
           <el-tab-pane label="商品内容" name="4">定时任务补偿</el-tab-pane>
@@ -110,6 +126,8 @@ export default {
         label: "cat_name",
         value: "cat_id",
       },
+      // 动态参数列表数据
+      manyTableData: [],
     };
   },
   methods: {
@@ -136,6 +154,34 @@ export default {
       }
       return true;
     },
+    handleTabClick() {
+      if (this.activeIndex === "1") {
+        // console.log("动态参数面板");
+        this.$http
+          .get(`categories/${this.cateId}/attributes`, {
+            params: { sel: "many" },
+          })
+          .then((res) => {
+            if (res.data.meta.status !== 200)
+              return this.$message.error("获取数据失败");
+            // console.log(res.data.data);
+            res.data.data.forEach((item) => {
+              item.attr_vals =
+                item.attr_vals.length === 0 ? [] : item.attr_vals.split(",");
+            });
+            this.manyTableData = res.data.data;
+            console.log(this.manyTableData);
+          });
+      }
+    },
+  },
+  computed: {
+    cateId() {
+      if (this.addForm.goods_cat.length !== 3) {
+        return null;
+      }
+      return this.addForm.goods_cat[2];
+    },
   },
   created() {
     this.getCateList();
@@ -146,5 +192,8 @@ export default {
 <style lang="less" scoped>
 .el-steps {
   margin: 15px 0;
+}
+.el-checkbox {
+  margin: 0 5px 0 0;
 }
 </style>
