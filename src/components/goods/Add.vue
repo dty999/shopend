@@ -81,7 +81,15 @@
               </el-checkbox-group>
             </el-form-item>
           </el-tab-pane>
-          <el-tab-pane label="商品属性" name="2">角色管理</el-tab-pane>
+          <el-tab-pane label="商品属性" name="2">
+            <el-form-item
+              :label="item2.attr_name"
+              v-for="(item2, index2) in onlyTableData"
+              :key="index2"
+            >
+              <el-input v-model="item2.attr_vals"></el-input>
+            </el-form-item>
+          </el-tab-pane>
           <el-tab-pane label="商品图片" name="3">角色管理</el-tab-pane>
           <el-tab-pane label="商品内容" name="4">定时任务补偿</el-tab-pane>
         </el-tabs>
@@ -128,6 +136,8 @@ export default {
       },
       // 动态参数列表数据
       manyTableData: [],
+      // 静态属性列表
+      onlyTableData: [],
     };
   },
   methods: {
@@ -170,7 +180,20 @@ export default {
                 item.attr_vals.length === 0 ? [] : item.attr_vals.split(",");
             });
             this.manyTableData = res.data.data;
-            console.log(this.manyTableData);
+            // console.log(this.manyTableData);
+          });
+      } else if (this.activeIndex === "2") {
+        this.$http
+          .get(`categories/${this.cateId}/attributes`, {
+            params: { sel: "only" },
+          })
+          .then((res) => {
+            if (res.data.meta.status !== 200) {
+              return this.$message.error("获取失败");
+            }
+            const data = res.data.data;
+            // console.log(data);
+            this.onlyTableData = data;
           });
       }
     },
