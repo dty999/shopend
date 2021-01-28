@@ -218,10 +218,16 @@ export default {
       }
     },
     handlePreview() {},
-    handleRemove() {},
+    handleRemove(file) {
+      // console.log(file);
+      const filePath = file.response.data.tmp_path;
+      const i = this.addForm.pics.findIndex((x) => x.pic === filePath);
+      this.addForm.pics.splice(i, 1);
+      // console.log(this.addForm.pics);
+    },
     handleSuccess(resp) {
       this.addForm.pics.push({ pic: resp.data.tmp_path });
-      console.log(this.addForm.pics);
+      // console.log(this.addForm.pics);
     },
   },
   computed: {
