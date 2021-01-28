@@ -95,6 +95,7 @@
               :action="uploadUrl"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-success="handleSuccess"
               list-type="picture"
               :headers="headersObj"
             >
@@ -122,7 +123,7 @@ export default {
         goods_weight: 0,
         goods_number: 0,
         goods_cat: [],
-        pics: [{ pic: "" }],
+        pics: [],
       },
       addFormRules: {
         goods_name: [
@@ -218,6 +219,10 @@ export default {
     },
     handlePreview() {},
     handleRemove() {},
+    handleSuccess(resp) {
+      this.addForm.pics.push({ pic: resp.data.tmp_path });
+      console.log(this.addForm.pics);
+    },
   },
   computed: {
     cateId() {
