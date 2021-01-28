@@ -96,6 +96,7 @@
               :on-preview="handlePreview"
               :on-remove="handleRemove"
               list-type="picture"
+              :headers="headersObj"
             >
               <el-button size="small" type="primary">点击上传</el-button>
               <div slot="tip" class="el-upload__tip">
@@ -121,6 +122,7 @@ export default {
         goods_weight: 0,
         goods_number: 0,
         goods_cat: [],
+        pics: [{ pic: "" }],
       },
       addFormRules: {
         goods_name: [
@@ -152,6 +154,9 @@ export default {
       onlyTableData: [],
       // 上传图片的地址
       uploadUrl: "http://vueshop.pixiv.download/api/private/v1/upload",
+      headersObj: {
+        Authorization: window.sessionStorage.getItem("token"),
+      },
     };
   },
   methods: {
