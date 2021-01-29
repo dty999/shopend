@@ -10,6 +10,7 @@
         <el-input v-model="addForm.attr_name"></el-input>
       </el-form-item>
     </el-form>
+
     <span slot="footer">
       <el-button @click="Visible = false">
         取 消

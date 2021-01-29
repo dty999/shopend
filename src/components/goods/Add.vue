@@ -108,12 +108,17 @@
           <el-tab-pane label="商品内容" name="4">定时任务补偿</el-tab-pane>
         </el-tabs>
       </el-form>
+      <PreviewDialog ref="previewDialog" />
     </el-card>
   </div>
 </template>
 
 <script>
+import PreviewDialog from "./dialog/PreviewDialog";
 export default {
+  components: {
+    PreviewDialog,
+  },
   data() {
     return {
       activeIndex: "0",
@@ -217,7 +222,10 @@ export default {
           });
       }
     },
-    handlePreview() {},
+    handlePreview(file) {
+      console.log(file);
+      this.$refs.previewDialog.Visible = true;
+    },
     handleRemove(file) {
       // console.log(file);
       const filePath = file.response.data.tmp_path;
