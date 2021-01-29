@@ -105,10 +105,15 @@
               </div>
             </el-upload>
           </el-tab-pane>
-          <el-tab-pane label="商品内容" name="4">定时任务补偿</el-tab-pane>
+          <el-tab-pane label="商品内容" name="4">
+            <quill-editor v-model="addForm.goods_introduce"></quill-editor>
+            <el-button type="primary" class="btnAdd" @click="addGoods"
+              >添加商品</el-button
+            >
+          </el-tab-pane>
         </el-tabs>
       </el-form>
-      <PreviewDialog ref="previewDialog" />
+      <PreviewDialog ref="previewDialog" :imgSrc="imgUrl" />
     </el-card>
   </div>
 </template>
@@ -129,6 +134,7 @@ export default {
         goods_number: 0,
         goods_cat: [],
         pics: [],
+        goods_introduce: "",
       },
       addFormRules: {
         goods_name: [
@@ -163,6 +169,7 @@ export default {
       headersObj: {
         Authorization: window.sessionStorage.getItem("token"),
       },
+      imgUrl: "",
     };
   },
   methods: {
@@ -225,6 +232,8 @@ export default {
     handlePreview(file) {
       console.log(file);
       this.$refs.previewDialog.Visible = true;
+      this.imgUrl = file.response.data.url;
+      console.log(this.imgUrl);
     },
     handleRemove(file) {
       // console.log(file);
@@ -236,6 +245,9 @@ export default {
     handleSuccess(resp) {
       this.addForm.pics.push({ pic: resp.data.tmp_path });
       // console.log(this.addForm.pics);
+    },
+    addGoods() {
+      // console.log(this.addForm);
     },
   },
   computed: {
@@ -258,5 +270,8 @@ export default {
 }
 .el-checkbox {
   margin: 0 5px 0 0;
+}
+.btnAdd {
+  margin-top: 15px;
 }
 </style>

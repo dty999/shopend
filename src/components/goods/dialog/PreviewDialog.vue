@@ -5,6 +5,7 @@
     width="50%"
     @close="handleClose"
   >
+    <img :src="imgSrc" class="imgClass" />
   </el-dialog>
 </template>
 
@@ -16,6 +17,7 @@ export default {
       Visible: false,
     };
   },
+  props: ["imgSrc"],
   methods: {
     handleClose() {
       this.Visible = false;
@@ -24,4 +26,9 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.imgClass {
+  width: 100%;
+  height: 100%;
+}
+</style>
