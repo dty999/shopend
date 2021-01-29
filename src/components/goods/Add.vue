@@ -120,6 +120,7 @@
 
 <script>
 import PreviewDialog from "./dialog/PreviewDialog";
+import _ from "lodash";
 export default {
   components: {
     PreviewDialog,
@@ -253,8 +254,10 @@ export default {
           return this.$message.error("请添加必要的表单项");
         } else {
           // console.log("发起添加请求");
-          // this.addForm.goods_cat = this.addForm.goods_cat.join(",");
-          console.log(this.addForm);
+          const form = _.cloneDeep(this.addForm);
+          form.goods_cat = form.goods_cat.join(",");
+
+          // console.log(form);
         }
       });
     },
