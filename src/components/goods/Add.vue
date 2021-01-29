@@ -248,6 +248,12 @@ export default {
     },
     addGoods() {
       // console.log(this.addForm);
+      this.$refs.addFormRef.validate((valid) => {
+        if (!valid) {
+          return this.$message.error("请添加必要的表单项");
+        } else {
+        }
+      });
     },
   },
   computed: {
