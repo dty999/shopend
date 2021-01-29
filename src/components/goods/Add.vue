@@ -252,6 +252,9 @@ export default {
         if (!valid) {
           return this.$message.error("请添加必要的表单项");
         } else {
+          // console.log("发起添加请求");
+          // this.addForm.goods_cat = this.addForm.goods_cat.join(",");
+          console.log(this.addForm);
         }
       });
     },
