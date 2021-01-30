@@ -272,7 +272,16 @@ export default {
             };
             this.addForm.attrs.push(newInfo);
           });
+          form.attrs = this.addForm.attrs;
           // console.log(form);
+          // 发起请求添加商品
+          this.$http.post(`goods`, form).then((res) => {
+            // console.log(res);
+            if (res.data.meta.status !== 201)
+              return this.$message.error("添加失败");
+            this.$router.push("/goods");
+            return this.$message.success("添加成功");
+          });
         }
       });
     },
