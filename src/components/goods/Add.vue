@@ -136,6 +136,7 @@ export default {
         goods_cat: [],
         pics: [],
         goods_introduce: "",
+        attrs: [],
       },
       addFormRules: {
         goods_name: [
@@ -256,7 +257,21 @@ export default {
           // console.log("发起添加请求");
           const form = _.cloneDeep(this.addForm);
           form.goods_cat = form.goods_cat.join(",");
-
+          // 处理商品参数和属性
+          this.manyTableData.forEach((item) => {
+            const newInfo = {
+              attr_id: item.attr_id,
+              attr_value: item.attr_vals.join(","),
+            };
+            this.addForm.attrs.push(newInfo);
+          });
+          this.onlyTableData.forEach((item) => {
+            const newInfo = {
+              attr_id: item.attr_id,
+              attr_value: item.attr_vals,
+            };
+            this.addForm.attrs.push(newInfo);
+          });
           // console.log(form);
         }
       });
