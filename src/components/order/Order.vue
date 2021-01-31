@@ -20,15 +20,31 @@
         <el-table-column type="index"></el-table-column>
         <el-table-column label="订单编号" prop="order_number"></el-table-column>
         <el-table-column label="订单价格" prop="order_price"></el-table-column>
-        <el-table-column label="是否付款" prop="pay_status"></el-table-column>
-        <el-table-column label="是否发货" prop="is_sand"></el-table-column>
-        <el-table-column label="下单时间" prop="create_time"></el-table-column>
+        <el-table-column label="是否付款" prop="pay_status">
+          <template slot-scope="scope">
+            <el-tag type="success" v-if="scope.row.pay_status === 1"
+              >已付款</el-tag
+            >
+            <el-tag type="danger" v-else>未付款</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否发货" prop="is_send">
+          <template slot-scope="scope">
+            {{ scope.row.is_send }}
+          </template>
+        </el-table-column>
+        <el-table-column label="下单时间" prop="create_time">
+          <template slot-scope="scope">
+            {{ scope.row.create_time | dateForm }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button
               type="primary"
               icon="el-icon-edit"
               size="mini"
+              @click="showBox(scope.row)"
             ></el-button>
             <el-button
               type="success"
@@ -38,6 +54,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分页区域 -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pagenum"
+        :page-sizes="[5, 10, 15, 20]"
+        :page-size="queryInfo.pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
     </el-card>
   </div>
 </template>
@@ -71,6 +98,15 @@ export default {
           this.orderList = res.data.data.goods;
         });
     },
+    handleSizeChange(newSize) {
+      this.queryInfo.pagesize = newSize;
+      this.getOrderList();
+    },
+    handleCurrentChange(pagenum) {
+      this.queryInfo.pagenum = pagenum;
+      this.getOrderList();
+    },
+    showBox(row) {},
   },
 };
 </script>
