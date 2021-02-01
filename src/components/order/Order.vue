@@ -65,11 +65,40 @@
         :total="total"
       >
       </el-pagination>
+      <!-- 改变地址对话框 -->
+      <el-dialog
+        title="改变地址"
+        :visible.sync="addressVisible"
+        width="50%"
+        @close="addressDialogClose"
+      >
+        <el-form
+          :model="addressForm"
+          label-width="100px"
+          ref="addressRef"
+          :rules="addressRules"
+        >
+          <el-form-item label="省市区/县" prop="address1">
+            <el-cascader
+              :options="cityData"
+              v-model="addressForm.address1"
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="详细地址" prop="address2">
+            <el-input v-model="addressForm.addres2"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer">
+          <el-button @click="addressVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleAddress">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script>
+import cityData from "./city.js";
 export default {
   data() {
     return {
@@ -80,6 +109,20 @@ export default {
       },
       total: 0,
       orderList: [],
+      addressVisible: false,
+      addressRules: {
+        address1: [
+          { required: true, message: "请选择省市区县", trigger: "blur" },
+        ],
+        address2: [
+          { required: true, message: "请填写详细地址", trigger: "blur" },
+        ],
+      },
+      addressForm: {
+        address1: [],
+        address2: "",
+      },
+      cityData,
     };
   },
   created() {
@@ -106,9 +149,21 @@ export default {
       this.queryInfo.pagenum = pagenum;
       this.getOrderList();
     },
-    showBox(row) {},
+    showBox(row) {
+      this.addressVisible = true;
+    },
+    handleAddress() {
+      this.addressVisible = false;
+    },
+    addressDialogClose() {
+      this.$refs.addressRef.resetFields();
+    },
   },
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.el-cascader {
+  width: 100%;
+}
+</style>
